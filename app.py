@@ -1,4 +1,6 @@
 import streamlit as st
+import streamlit.components.v1 as components
+
 from datetime import datetime, timedelta
 from services.searchNews import SearchNews
 from services.articlesToTranscript import TranscriptWriter
@@ -6,13 +8,14 @@ from services.textToSpeech import TextToSpeech
 import time
 
 # Define the user inputs as Streamlit widgets
-st.title("yoursDaily - Your AI generated podcast ")
+st.title("yoursDaily\nYour daily AI generated podcast.")
 
 # Options for topics of interest
-topics = ["Artificial Intelligence", "Tennis", "Politics", "Economics", "French Elections"]
+topics = ["Artificial Intelligence", "Tennis", "Politics", "Economics"]
 USER_PREFERENCES = st.multiselect("Select your topics of interest", topics, default=[])
 
 # Toggle for custom topic input
+custom_topic = None
 with st.expander("Interested in something else ? Add a custom topic"):
     custom_topic = st.text_input("Enter a custom topic")
     if st.button("Add Custom Topic"):
@@ -32,12 +35,14 @@ time_options = {
 time_range = st.selectbox("Select the time range for news articles", list(time_options.keys()))
 DAYS_AGO = time_options[time_range]
 
-# Update the preferences string
-rephrased_preferences = " or ".join([f"Recent news about {topic}" for topic in USER_PREFERENCES])
-
 date_cutoff = (datetime.now() - timedelta(days=DAYS_AGO)).strftime("%Y-%m-%d")
 
 if st.button("Generate Podcast"):
+    # Update the preferences string
+    preferences = USER_PREFERENCES + [custom_topic]
+    rephrased_preferences = " or ".join([f"Recent news about {topic}" for topic in preferences])
+    st.success(rephrased_preferences)
+
     with st.status("Searching for news...") as status:
         search_client = SearchNews()
         news = search_client.run(
@@ -75,9 +80,23 @@ if st.button("Generate Podcast"):
     st.write("Podcast generated:")
     st.audio(podcast_path)
 
+    st.write("Like it ? Download your podcast and share it on Twitter/X:")
+    components.html(
+    f"""
+        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" 
+        data-text="Check out my AI generated podcast on {rephrased_preferences}🎈" 
+        data-url="https://github.com/IronJayx/yoursDaily"
+        data-show-count="false">
+        data-size="Large" 
+        data-hashtags="streamlit,python"
+        Tweet
+        </a>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    """
+    )   
+
     # Display URLs of the retrieved news
     st.write("Want to dive deeper? Here is the list of articles used to generate the audio:")
     for article in news:
         st.write(f"- [{article['title']}]({article['url']})")
 
-st.write("App ready for generating podcasts from news!")
