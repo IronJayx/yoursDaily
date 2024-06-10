@@ -1,5 +1,10 @@
 # yoursDaily: Your daily AI-generated podcast
 
+## Demo
+
+https://github.com/IronJayx/yoursDaily/assets/101343852/b26ba1e5-ef5a-4140-bede-9e52fa8dbaae
+
+
 ## Requirements
 
 To run this app you need to have:
