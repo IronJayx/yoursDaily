@@ -1,0 +1,5 @@
+loguru
+exa_py
+tiktoken
+python-dotenv
+streamlit

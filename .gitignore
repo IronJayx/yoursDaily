@@ -1,0 +1,13 @@
+*__pycache__*
+
+# local
+.env
+venv
+data
+
+
+# code I ended up not using
+clients/embeddingClient.py
+clients/vectorStore.py
+custom_search
+custom_run
